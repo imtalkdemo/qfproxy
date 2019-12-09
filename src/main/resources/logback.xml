@@ -1,69 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- 控制台输出 -->
-    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <property name="LOG_HOME" value="/Users/zhangchao/work/talk/qfproxy/logs"/>
+    <appender name="STDOUT"
+              class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-
-    <!-- 时间滚动输出 level为 INFO 日志 -->
-    <appender name="file—info"
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_HOME}/app.log</file>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n </pattern>
+        </encoder>
+    </appender>
+    <!--    &lt;!&ndash; 时间滚动输出 level为 INFO 日志 &ndash;&gt;-->
+    <appender name="file-info"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/demo.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${catalina.base}/logs/qfproxy_info.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${LOG_HOME}/demo.%d{yyyy-MM-dd}.log</FileNamePattern>
             <MaxHistory>30</MaxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
         </encoder>
     </appender>
-
-    <!-- 时间滚动输出 level为 ERROR 日志 -->
-    <appender name="file—error"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${catalina.base}/logs/qfproxy_error.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <MaxHistory>30</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="runtime"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${catalina.base}/logs/qfproxy_runtime.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <MaxHistory>30</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="com.qunar.qfproxy.utils.QFProxyRuntimeLogger" level="INFO">
-        <appender-ref ref="runtime"/>
+    <logger name="com.talk.demo" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="file-info" />
     </logger>
-
     <root level="INFO">
-        <appender-ref ref="stdout"/>
-        <appender-ref ref="file—info"/>
-        <appender-ref ref="file—error"/>
-        <appender-ref ref="EMAIL"/>
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="file-info" />
     </root>
-
-    <logger name="com.qunar.ucenter" level="ERROR"/>
-    <logger name="com.qunar.qfproxy.utils.HttpClientUtils" level="DEBUG"/>
 </configuration>
