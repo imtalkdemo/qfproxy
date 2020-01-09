@@ -7,14 +7,17 @@ import com.qunar.qfproxy.model.FileType;
 import com.qunar.qfproxy.utils.imgtype.ImgTypeUtils;
 import com.qunar.qfproxy.utils.imgtype.InputStreamWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class DownloadUtils {
 //    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadUtils.class);
 
+    public static Config qfproxy = new Config();
 
+    @Autowired
     public static String getDownloadUri(String ver, String key, String name) {
-        String sufficnt = Config.PROJECT_HOST_AND_PORT;
+        String sufficnt = qfproxy.getHostPort();
         if (Strings.isNullOrEmpty(sufficnt)) {
             sufficnt = "";
         }

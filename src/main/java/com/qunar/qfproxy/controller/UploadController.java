@@ -24,6 +24,12 @@ import static com.qunar.qfproxy.utils.ErrorCodeUtil.checkParamsAndCode;
 public class UploadController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadController.class);
 
+    @RequestMapping("/hello")
+    @ResponseBody
+    public String hello(HttpServletRequest request, HttpServletResponse response) {
+        return "hello, world";
+    }
+
     @RequestMapping("/{ver:v[0-9]+}/inspection/{type}")
     @ResponseBody
     public JsonResult inspect(@PathVariable(value = "ver") String ver,

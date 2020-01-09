@@ -1,13 +1,13 @@
 spring:
   profiles:
-    active: prod
+    active: dev
 
 ---
 spring:
   profiles: dev
 
 server:
-  port: 8083
+  port: 8082
 
 ---
 spring:
