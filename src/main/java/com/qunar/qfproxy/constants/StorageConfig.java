@@ -2,6 +2,8 @@ package com.qunar.qfproxy.constants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -11,20 +13,38 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 
+@PropertySource(value = ("classpath:storage.properties"))
 @Component
+@ConfigurationProperties(prefix = "store")
 public class StorageConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageConfig.class);
-    private static Properties props;
-    public static final String SWIFT_FOLDER = getProperty("storage_folder");
-    public static final String SWIFT_FOLDER_EMO_PACKAGE = getProperty("storage_folder_emo");
+
+    private String storageFolder;
+    private String storageFolderEmo;
+
+    public String getStorageFolder() {
+        return storageFolder;
+    }
+
+    public void setStorageFolder(String storageFolder) {
+        this.storageFolder = storageFolder;
+    }
+
+    public String getStorageFolderEmo() {
+        return storageFolderEmo;
+    }
+
+    public void setStorageFolderEmo(String storageFolderEmo) {
+        this.storageFolderEmo = storageFolderEmo;
+    }
 
     @PostConstruct
     private void initStoreFolder() {
         try {
-            File f = new File(SWIFT_FOLDER);
+            File f = new File(this.storageFolder);
             f.setWritable(true, false);
             f.mkdirs();
-            File fEmo = new File(SWIFT_FOLDER_EMO_PACKAGE);
+            File fEmo = new File(this.storageFolderEmo);
             fEmo.setWritable(true, false);
             fEmo.mkdirs();
             LOGGER.info("upload文件件初始化创建成功");
@@ -33,46 +53,4 @@ public class StorageConfig {
         }
     }
 
-    private synchronized static void init() {
-        if (props != null) {
-            return;
-        }
-        InputStreamReader isr = null;
-        try {
-            String filename = "storage.properties";
-            isr = new InputStreamReader(StorageConfig.class.getClassLoader().getResourceAsStream(filename), "UTF-8");
-            props = new Properties();
-
-            props.load(isr);
-        } catch (IOException e) {
-            throw new ExceptionInInitializerError("Initialize the config error!");
-        } finally {
-            closeStream(isr);
-        }
-    }
-
-    public static String getProperty(String name) {
-        if (props == null) {
-            init();
-        }
-        String val = props.getProperty(name.trim());
-        if (val == null) {
-            return null;
-        } else {
-            //去除前后端空格
-            return val.trim();
-        }
-    }
-
-    private static void closeStream(InputStreamReader is) {
-        if (is == null) {
-            return;
-        }
-
-        try {
-            is.close();
-        } catch (IOException e) {
-            throw new ExceptionInInitializerError("Initialize the config error!");
-        }
-    }
 }

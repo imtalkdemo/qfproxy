@@ -26,6 +26,9 @@ public class NewDownloadController {
     @Autowired
     private DownloadService downloadService;
 
+    @Autowired
+    private StorageConfig store;
+
     @RequestMapping(value = "/download/{key:.*}", method = RequestMethod.GET)
     public void download(
             @PathVariable(value = "key") String key,
@@ -41,7 +44,7 @@ public class NewDownloadController {
             writer.flush();
             return;
         }
-        fileName = StorageConfig.SWIFT_FOLDER + fileName;
+        fileName = store.getStorageFolder() + fileName;
         downloadService.downloadService(fileName,req,resp);
 
     }

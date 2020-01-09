@@ -1,5 +1,6 @@
 package com.qunar.qfproxy.controller;
 
+import com.qunar.qfproxy.constants.Config;
 import com.qunar.qfproxy.constants.StorageConfig;
 import com.qunar.qfproxy.model.FileType;
 import com.qunar.qfproxy.model.JsonResult;
@@ -9,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,10 +26,16 @@ import static com.qunar.qfproxy.utils.ErrorCodeUtil.checkParamsAndCode;
 public class UploadController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadController.class);
 
+    @Autowired
+    private Config conf;
+
+    @Autowired
+    private StorageConfig store;
+
     @RequestMapping("/hello")
     @ResponseBody
     public String hello(HttpServletRequest request, HttpServletResponse response) {
-        return "hello, world";
+        return "hello, world" + conf.getHostPort() + store.getStorageFolder();
     }
 
     @RequestMapping("/{ver:v[0-9]+}/inspection/{type}")
@@ -54,7 +62,7 @@ public class UploadController {
         if (StringUtils.isEmpty(name)) {
             name = key;
         }
-        File file = new File(StorageConfig.SWIFT_FOLDER + key);
+        File file = new File(store.getStorageFolder() + key);
         if (!file.exists()) {
             response.addIntHeader(X_QFPROXY_CODE, FILE_EXIST);
             return JsonResult.newSuccJsonResult("文件不存在", null);
@@ -103,7 +111,7 @@ public class UploadController {
             keyWithType = DownloadUtils.handleKeyForImg(key, imgRealType);
             //如果是图片，那么name换成key.realType
             name = DownloadUtils.handleImgName(name, imgRealType, key);
-            String newFileName = StorageConfig.SWIFT_FOLDER + keyWithType;
+            String newFileName = store.getStorageFolder() + keyWithType;
             File saveFile = new File(newFileName);
             FileUtils.copyInputStreamToFile(fileIS, saveFile);
             String downUri = DownloadUtils.getDownloadUri("v2", keyWithType, name);

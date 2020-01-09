@@ -38,6 +38,9 @@ public class EmoDownloadController {
     @Autowired
     private DownloadService downloadService;
 
+    @Autowired
+    private StorageConfig store;
+
     @RequestMapping("/d/z/{packageName:.*}")
     @ResponseBody
     public void downloadEmotions(@PathVariable(value = "packageName") String packageName,
@@ -48,7 +51,7 @@ public class EmoDownloadController {
         }
         LOGGER.info("get the emo package:{}", packageName);
         try {
-            downloadService.downloadService(StorageConfig.SWIFT_FOLDER_EMO_PACKAGE + packageName, request, response);
+            downloadService.downloadService(store.getStorageFolderEmo() + packageName, request, response);
         } catch (IOException e) {
             LOGGER.error("emo download fail", e);
         }
@@ -61,7 +64,7 @@ public class EmoDownloadController {
                                 HttpServletRequest request,
                                 HttpServletResponse response) {
         StringBuilder emoPostion = new StringBuilder();
-        emoPostion.append(StorageConfig.SWIFT_FOLDER_EMO_PACKAGE).append(packageKey).append("/");
+        emoPostion.append(store.getStorageFolderEmo()).append(packageKey).append("/");
         try {
             File files = new File(emoPostion.toString());
             String[] names = files.list();    //获取目录所有文件和路径,并以字符串数组返回
@@ -95,7 +98,7 @@ public class EmoDownloadController {
             @PathVariable(value = "key") String typeName,
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
-        String fileName = StorageConfig.SWIFT_FOLDER_EMO_PACKAGE+typeName;
+        String fileName = store.getStorageFolderEmo()+typeName;
         downloadService.downloadService(fileName, request, response);
     }
 

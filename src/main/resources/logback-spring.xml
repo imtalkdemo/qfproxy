@@ -2,7 +2,7 @@
 
 <configuration>
 
-    <property name="LOG_HOME" value="/Users/zhangchao/work/talk/qfproxy/logs"/>
+    <property name="LOG_HOME" value="/home/zhangchao/work/talk/qfproxy/logs"/>
     <appender name="STDOUT"
               class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

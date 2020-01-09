@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
@@ -35,6 +36,9 @@ import static com.qunar.qfproxy.utils.ErrorCodeUtil.checkParamsAndCode;
 
 public class UploadV2Servlet extends HttpServlet {
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadV2Servlet.class);
+
+    @Autowired
+    private StorageConfig store;
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -88,7 +92,7 @@ public class UploadV2Servlet extends HttpServlet {
             String keyWithType = DownloadUtils.handleKeyForImg(key, imgRealType);
             //如果是图片，那么name换成key.realType
             name = DownloadUtils.handleImgName(name, imgRealType, key);
-            String newFileName = StorageConfig.SWIFT_FOLDER + keyWithType;
+            String newFileName = store.getStorageFolder() + keyWithType;
             File saveFile = new File(newFileName);
             FileUtils.copyInputStreamToFile(fileIS, saveFile);
             String downUri = DownloadUtils.getDownloadUri("v2", keyWithType, name);
